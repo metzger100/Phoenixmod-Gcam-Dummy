@@ -32,19 +32,6 @@ public class eszdman {
         this.mCameraIDs = sharedPreferences.getStringSet("pref_list_camera_key", null);
     }
 
-    private boolean checkCaps(String str, ArrayList<String> arrayList) {
-        if (arrayList.size() == 0) {
-            return false;
-        }
-        Iterator<String> it = arrayList.iterator();
-        while (it.hasNext()) {
-            if (it.next().equals(str)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean getBit(int i, int i2) {
         return ((i2 >> (i + -1)) & 1) == 1;
     }
