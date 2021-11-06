@@ -1,5 +1,7 @@
 package com.android.phoenixmod_gcam_dummy;
 
+import static android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE;
+
 import android.content.SharedPreferences;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -51,38 +53,31 @@ public class eszdman {
         ArrayList arrayList = new ArrayList();
         ArrayList<String> arrayList2 = new ArrayList<>();
         for (int i = 0; i < 121; i++) {
-            arrayList.add(String.valueOf(i));
-        }
-        try {
-            Iterator it = arrayList.iterator();
-            while (it.hasNext()) {
-                String str = (String) it.next();
-                try {
-                    CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(str);
-                    if (cameraCharacteristics != null) {
-                        int parseInt = Integer.parseInt(str);
-                        String str2 = TAG;
-                        Log.d(str2, "Number:" + str + " bit 4:" + getBit(4, parseInt) + " bit 5:" + getBit(5, parseInt) + " bit 6:" + getBit(6, parseInt) + " bit 7:" + getBit(7, parseInt) + " bit 8:" + getBit(8, parseInt));
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(String.valueOf(((float[]) cameraCharacteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS))[0]));
-                        sb.append(String.valueOf(((float[]) cameraCharacteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES))[0]));
-                        if (parseInt <= 2) {
-                            sb.append(str);
+            try {
+                        CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(String.valueOf(i));
+                        if (cameraCharacteristics != null) {
+                            String parseInt = String.valueOf(i);
+                            if (cameraCharacteristics.get(FLASH_INFO_AVAILABLE) == true){
+                                
+                            }
+                            sb.append(String.valueOf(((float[]) cameraCharacteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS))[0]));
+                            sb.append(String.valueOf(((float[]) cameraCharacteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES))[0]));
+                            if (parseInt <= 2) {
+                                sb.append(str);
+                            }
+                            String sb2 = sb.toString();
+                            String str3 = TAG;
+                            Log.d(str3, "Caps:" + sb2);
+                            if (!getBit(6, parseInt) && !checkCaps(sb2, arrayList2)) {
+                                arrayList2.add(sb2);
+                                this.mCameraIDs.add(parseInt);
+                            }
                         }
-                        String sb2 = sb.toString();
-                        String str3 = TAG;
-                        Log.d(str3, "Caps:" + sb2);
-                        if (!getBit(6, parseInt) && !checkCaps(sb2, arrayList2)) {
-                            arrayList2.add(sb2);
-                            this.mCameraIDs.add(str);
-                        }
-                    }
-                } catch (Exception e) {
-                }
+
+            } catch (Exception e) {
+                this.mCameraIDs.toArray();
             }
-        } catch (Exception e2) {
         }
-        this.mCameraIDs.toArray();
     }
 
     private boolean isTwoLens(CameraCharacteristics cameraCharacteristics) {
