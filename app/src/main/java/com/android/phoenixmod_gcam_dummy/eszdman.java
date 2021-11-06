@@ -49,35 +49,23 @@ public class eszdman {
         return ((i2 >> (i + -1)) & 1) == 1;
     }
 
-    private void getCameraId(CameraManager cameraManager) {
-        ArrayList arrayList = new ArrayList();
-        ArrayList<String> arrayList2 = new ArrayList<>();
+    private Set<String> getCameraId(CameraManager cameraManager) {
         for (int i = 0; i < 121; i++) {
             try {
-                        CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(String.valueOf(i));
-                        if (cameraCharacteristics != null) {
-                            String parseInt = String.valueOf(i);
-                            if (cameraCharacteristics.get(FLASH_INFO_AVAILABLE) == true){
-                                
-                            }
-                            sb.append(String.valueOf(((float[]) cameraCharacteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS))[0]));
-                            sb.append(String.valueOf(((float[]) cameraCharacteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES))[0]));
-                            if (parseInt <= 2) {
-                                sb.append(str);
-                            }
-                            String sb2 = sb.toString();
-                            String str3 = TAG;
-                            Log.d(str3, "Caps:" + sb2);
-                            if (!getBit(6, parseInt) && !checkCaps(sb2, arrayList2)) {
-                                arrayList2.add(sb2);
-                                this.mCameraIDs.add(parseInt);
-                            }
+                CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(String.valueOf(i));
+                if (cameraCharacteristics != null) {
+                    String parseInt = String.valueOf(i);
+                    if (cameraCharacteristics.get(FLASH_INFO_AVAILABLE) == true){
+                        if (!getBit(6, Integer.parseInt(parseInt))) {
+                            this.mCameraIDs.add(parseInt);
                         }
-
+                    }
+                }
             } catch (Exception e) {
                 this.mCameraIDs.toArray();
             }
         }
+        return mCameraIDs;
     }
 
     private boolean isTwoLens(CameraCharacteristics cameraCharacteristics) {
