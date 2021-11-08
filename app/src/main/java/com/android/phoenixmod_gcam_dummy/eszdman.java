@@ -36,16 +36,19 @@ public class eszdman {
         return ((i2 >> (i + -1)) & 1) == 1;
     }
 
-    private Set<String> getCameraId(CameraManager cameraManager) {
+    private void getCameraId(CameraManager cameraManager) {
+        String IDofDepth = null;
         for (int i = 0; i < 121; i++) {
             try {
                 CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(String.valueOf(i));
                 if (cameraCharacteristics != null) {
                     String parseInt = String.valueOf(i);
-                    if (cameraCharacteristics.get(FLASH_INFO_AVAILABLE) == true){
+                    if (i <= 1 && cameraCharacteristics.get(FLASH_INFO_AVAILABLE) == true){
                         if (!getBit(6, Integer.parseInt(parseInt))) {
                             this.mCameraIDs.add(parseInt);
                         }
+                    } else {
+                        IDofDepth = parseInt;
                     }
                 }
             } catch (Exception e) {
@@ -54,7 +57,10 @@ public class eszdman {
         }
         Log.d("ID-list", "ID-List:");
         Log.d("ID-list", manualArray().toString());
-        return mCameraIDs;
+        if (IDofDepth != null){
+            this.mCameraIDs.add(IDofDepth);
+        }
+        return;
     }
 
     private boolean isTwoLens(CameraCharacteristics cameraCharacteristics) {
