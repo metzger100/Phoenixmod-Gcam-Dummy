@@ -22,7 +22,7 @@ public class eszdman {
     public eszdman(CameraManager cameraManager) {
         cameraManager2 = this;
         this.mCameraIDs = new HashSet();
-        SharedPreferences sharedPreferences = cip.e.b;
+        SharedPreferences sharedPreferences = null;
         this.SharedPreferences = sharedPreferences;
         if (get("pref_enable_camera_key") == 0) {
             getCameraId(cameraManager);
