@@ -52,7 +52,7 @@ public class eszdman {
                 this.mCameraIDs.toArray();
             }
         }
-        Log.v("list", manualArray().toString());
+        Log.v("ID-list", manualArray().toString());
         return mCameraIDs;
     }
 
