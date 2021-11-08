@@ -43,10 +43,10 @@ public class eszdman {
                 CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(String.valueOf(i));
                 if (cameraCharacteristics != null) {
                     String parseInt = String.valueOf(i);
-                    if (i <= 1 && cameraCharacteristics.get(FLASH_INFO_AVAILABLE) == true){
-                        if (!getBit(6, Integer.parseInt(parseInt))) {
-                            this.mCameraIDs.add(parseInt);
-                        }
+                    if (i >= 2 && cameraCharacteristics.get(FLASH_INFO_AVAILABLE) == true){
+                        this.mCameraIDs.add(parseInt);
+                    } else if (i <=1) {
+                        this.mCameraIDs.add(parseInt);
                     } else {
                         IDofDepth = parseInt;
                     }
