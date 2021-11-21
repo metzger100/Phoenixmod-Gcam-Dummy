@@ -1,16 +1,21 @@
 package com.android.phoenixmod_gcam_dummy;
 
 import static android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE;
+import static android.hardware.camera2.CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS;
+import static android.hardware.camera2.CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE;
+import static android.hardware.camera2.CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE;
 
 import android.content.SharedPreferences;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.util.Log;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /* loaded from: classes2.dex */
 public class eszdman {
@@ -38,18 +43,27 @@ public class eszdman {
 
     private void getCameraId(CameraManager cameraManager) {
         String IDofDepth = null;
+        TreeMap<String, Double> TM = new TreeMap<>();
         for (int i = 0; i < 121; i++) {
             try {
                 CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(String.valueOf(i));
                 if (cameraCharacteristics != null) {
                     String parseInt = String.valueOf(i);
                     if (i >= 2 && cameraCharacteristics.get(FLASH_INFO_AVAILABLE) == true){
-                        this.mCameraIDs.add(parseInt);
+                        float FocalLength = cameraCharacteristics.get(LENS_INFO_AVAILABLE_FOCAL_LENGTHS) [0];
+                        int PixelArrayWidth = cameraCharacteristics.get(SENSOR_INFO_PIXEL_ARRAY_SIZE).getWidth();
+                        float SensorWidth = cameraCharacteristics.get(SENSOR_INFO_PHYSICAL_SIZE).getWidth();
+                        TM.put(parseInt, calculateAngleOfView(FocalLength, SensorWidth, PixelArrayWidth));
                     } else if (i <=1) {
                         this.mCameraIDs.add(parseInt);
                     } else {
                         IDofDepth = parseInt;
                     }
+                }
+                Iterator It = TM.entrySet().iterator();
+                while (It.hasNext())
+                {
+                    this.mCameraIDs.add((((Map.Entry)It.next()).getKey()).toString());
                 }
             } catch (Exception e) {
                 this.mCameraIDs.toArray();
@@ -61,6 +75,16 @@ public class eszdman {
             this.mCameraIDs.add(IDofDepth);
         }
         return;
+    }
+
+    public static float calculatePixelSize(int pixelArrayWidth, float sensorWidth) {
+        return (sensorWidth / ((float) pixelArrayWidth)) * 1000.0f;
+    }
+
+    public static Double calculateAngleOfView(float focalLength, float sensorSize, int pixelArraySize) {
+        float pixelSize = calculatePixelSize(pixelArraySize, sensorSize);
+        return Math.toDegrees(Math.atan(Math.sqrt(Math.pow(sensorSize * pixelSize, 2.0d)
+                + Math.pow(sensorSize * pixelSize, 2.0d)) / ((double) (2.0f * focalLength))) * 2.0d);
     }
 
     private boolean isTwoLens(CameraCharacteristics cameraCharacteristics) {
