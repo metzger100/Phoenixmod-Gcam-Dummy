@@ -11,11 +11,14 @@ import android.hardware.camera2.CameraManager;
 import android.util.Log;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /* loaded from: classes2.dex */
 public class eszdman {
@@ -43,38 +46,33 @@ public class eszdman {
 
     private void getCameraId(CameraManager cameraManager) {
         String IDofDepth = null;
-        TreeMap<String, Double> TM = new TreeMap<>();
+        TreeMap<Double, Integer> TM = new TreeMap<>();
         for (int i = 0; i < 121; i++) {
             try {
                 CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(String.valueOf(i));
                 if (cameraCharacteristics != null) {
                     String parseInt = String.valueOf(i);
-                    if (i >= 2 && cameraCharacteristics.get(FLASH_INFO_AVAILABLE) == true){
+                    if (i >= 2 && cameraCharacteristics.get(FLASH_INFO_AVAILABLE)){
                         float FocalLength = cameraCharacteristics.get(LENS_INFO_AVAILABLE_FOCAL_LENGTHS) [0];
                         int PixelArrayWidth = cameraCharacteristics.get(SENSOR_INFO_PIXEL_ARRAY_SIZE).getWidth();
                         float SensorWidth = cameraCharacteristics.get(SENSOR_INFO_PHYSICAL_SIZE).getWidth();
-                        TM.put(parseInt, calculateAngleOfView(FocalLength, SensorWidth, PixelArrayWidth));
+                        TM.put(calculateAngleOfView(FocalLength, SensorWidth, PixelArrayWidth), i);
                     } else if (i <=1) {
                         this.mCameraIDs.add(parseInt);
                     } else {
                         IDofDepth = parseInt;
                     }
                 }
-                Iterator It = TM.entrySet().iterator();
-                while (It.hasNext())
-                {
-                    this.mCameraIDs.add((((Map.Entry)It.next()).getKey()).toString());
-                }
             } catch (Exception e) {
                 this.mCameraIDs.toArray();
             }
         }
+        for (Double key : new TreeSet<>(TM.descendingKeySet())) this.mCameraIDs.add(TM.get(key).toString());
         Log.d("ID-list", "ID-List:");
         Log.d("ID-list", manualArray().toString());
         if (IDofDepth != null){
             this.mCameraIDs.add(IDofDepth);
         }
-        return;
     }
 
     public static float calculatePixelSize(int pixelArrayWidth, float sensorWidth) {
