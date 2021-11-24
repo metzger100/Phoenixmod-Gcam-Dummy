@@ -56,7 +56,9 @@ public class eszdman {
                         float FocalLength = cameraCharacteristics.get(LENS_INFO_AVAILABLE_FOCAL_LENGTHS) [0];
                         int PixelArrayWidth = cameraCharacteristics.get(SENSOR_INFO_PIXEL_ARRAY_SIZE).getWidth();
                         float SensorWidth = cameraCharacteristics.get(SENSOR_INFO_PHYSICAL_SIZE).getWidth();
-                        TM.put(calculateAngleOfView(FocalLength, SensorWidth, PixelArrayWidth), i);
+                        double AngleOfView = calculateAngleOfView(FocalLength, SensorWidth, PixelArrayWidth);
+                        TM.put(AngleOfView, i);
+                        Log.d("AOV", "SensorAngleOfView ID: "+ i + " Angle of View: "+ (int)AngleOfView);
                     } else if (i <=1) {
                         this.mCameraIDs.add(parseInt);
                     } else {
@@ -68,11 +70,10 @@ public class eszdman {
             }
         }
         for (Double key : new TreeSet<>(TM.descendingKeySet())) this.mCameraIDs.add(TM.get(key).toString());
-        Log.d("ID-list", "ID-List:");
-        Log.d("ID-list", manualArray().toString());
         if (IDofDepth != null){
             this.mCameraIDs.add(IDofDepth);
         }
+        Log.d("CameraIDs","IDs:"+ mCameraIDs);
     }
 
     public static float calculatePixelSize(int pixelArrayWidth, float sensorWidth) {
